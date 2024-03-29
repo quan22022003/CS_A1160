@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import pycountry_convert as pc
 
 # Read data from CSV files
-medDoc = pd.read_csv('doctors.csv')
-pharm = pd.read_csv('pharmarcist.csv')
+medDoc = pd.read_csv('medicalDoctors.csv')
+pharm = pd.read_csv('phharmacists.csv')
 
 # Merge doctor and pharmacist data
 medProf = medDoc.merge(pharm, on=['Location', 'Period'], how='inner')
