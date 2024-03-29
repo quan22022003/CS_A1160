@@ -1,37 +1,5 @@
 #linechartDoctorpharmacist
-# Importing necessary libraries
-import pandas as pd
-import matplotlib.pyplot as plt
-import pycountry_convert as pc
 
-# Read data from CSV files
-medDoc = pd.read_csv('medicalDoctors.csv')
-pharm = pd.read_csv('phharmacists.csv')
-
-# Merge doctor and pharmacist data
-medProf = medDoc.merge(pharm, on=['Location', 'Period'], how='inner')
-
-# Calculate total density
-medProf['Total Density'] = medProf['First Tooltip_x'] + medProf['First Tooltip_y']
-
-# Drop unnecessary columns
-columns_to_drop = ['Indicator_x', 'Indicator_y']
-medProf = medProf.drop(columns=columns_to_drop)
-
-# Rename the columns
-medProf = medProf.rename(columns={'First Tooltip_x': 'Doctors Density','First Tooltip_y': 'Pharmacists Density' })
-
-# Function to get continent from country
-def get_continent(country):
-    try:
-        country_code = pc.country_name_to_country_alpha2(country)
-        continent_code = pc.country_alpha2_to_continent_code(country_code)
-        continent = pc.convert_continent_code_to_continent_name(continent_code)
-        return continent
-    except:
-        return None
-
-# Aggregate data by continent
 medProf['Continent'] = medProf['Location'].apply(get_continent)
 continent_medProf = medProf.groupby(['Continent', 'Period']).agg({
     'Total Density': 'mean'
@@ -90,12 +58,9 @@ plt.show()
 
 #linechartExpectancy
 # Importing necessary libraries
-import pandas as pd
-import matplotlib.pyplot as plt
-import pycountry_convert as pc
 
 # Read data from CSV file
-life_expectancy = pd.read_csv('expectancy.csv')
+life_expectancy = pd.read_csv('HALElifeExpectancyAtBirth.csv')
 
 # Function to get continent from country
 def get_continent(country):
@@ -142,10 +107,10 @@ import pandas as pd
 import plotly.express as px
 
 # Read data from CSV files and filter for the year 2018
-doctor_data = pd.read_csv('doctors.csv')
+doctor_data = pd.read_csv('medicalDoctors.csv')
 doctor_data = doctor_data[doctor_data['Period'] == 2018]
 
-pharmacist_data = pd.read_csv('pharmarcist.csv')
+pharmacist_data = pd.read_csv('pharmacists.csv')
 pharmacist_data = pharmacist_data[pharmacist_data['Period'] == 2018]
 
 # Merge doctor and pharmacist data
@@ -180,7 +145,7 @@ import pandas as pd
 import plotly.express as px
 
 # Read data from CSV file
-df = pd.read_csv('expectancy.csv')
+df = pd.read_csv('HALElifeExpectancyAtBirth.csv')
 
 # Filter data for the year 2019
 filtered_data = df[df['Period'] == 2019]
