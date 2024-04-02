@@ -1,3 +1,40 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import pycountry_convert as pc
+from statsmodels.formula.api import ols
+import seaborn as sns
+
+medDoc = pd.read_csv('medicalDoctors.csv')
+pharm = pd.read_csv('pharmacists.csv')
+lifeExp = pd.read_csv('HALElifeExpectancyAtBirth.csv')
+medProf = medDoc.merge(pharm, on=['Location', 'Period'], how='inner')
+medProf['Total Density'] = medProf['First Tooltip_x'] + medProf['First Tooltip_y']
+
+# Drop unnecessary columns
+columns_to_drop = ['Indicator_x', 'Indicator_y']
+medProf = medProf.drop(columns=columns_to_drop)
+
+# Rename the columns
+medProf = medProf.rename(columns={'First Tooltip_x': 'Pharmacists Density','First Tooltip_y': 'Doctors Density' })
+medProf.head()
+medProf_lifeExp = medProf.merge(lifeExp, on=['Location', 'Period'], how='inner')
+medProf_lifeExp
+columns_to_drop = ['Indicator']
+medProf_lifeExp = medProf_lifeExp.drop(columns=columns_to_drop)
+
+# Rename the columns
+medProf_lifeExp = medProf_lifeExp.rename(columns={'Dim1': 'Sex','First Tooltip': 'Years' })
+medProf_lifeExp.head()
+def get_continent(country):
+    try:
+        country_code = pc.country_name_to_country_alpha2(country)
+        continent_code = pc.country_alpha2_to_continent_code(country_code)
+        continent = pc.convert_continent_code_to_continent_name(continent_code)
+        return continent
+    except:
+        return None
+
 #linechartDoctorpharmacist
 
 medProf['Continent'] = medProf['Location'].apply(get_continent)
